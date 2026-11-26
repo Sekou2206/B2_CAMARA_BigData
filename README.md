@@ -16,24 +16,38 @@ Projet fil rouge du cours Big Data. On part des données de démonstration de l'
 | `TP2/01_ingestion_api_mongodb.ipynb` | Chargement dans MongoDB et simulation des paiements |
 | `TP2/02_traitement_pyspark.ipynb` | Traitement avec PySpark, Spark UI et indicateurs |
 | `TP2/resultats/` | Les indicateurs en CSV, pour le jour 3 |
+| `TP3/atelier_jour3.ipynb` | Pseudonymisation des clients, export Parquet et 3 graphiques |
+| `TP3/app.py` | Le dashboard Streamlit |
+| `TP3/data/` | Les datasets Parquet pseudonymisés |
+| `TP3/graphiques/` | Les 3 graphiques exportés |
+| `TP3/architecture.md` | Le schéma du pipeline et le rôle de chaque outil |
+| `TP3/note_securite.md` | Les données personnelles, les risques et les protections |
 | `captures/` | Les captures de Spark UI et des notebooks |
 
 ## Outils utilisés
 
-Python 3.12, pandas, Jupyter, MongoDB 7 dans Docker, Java 17, PySpark 4.0.1 avec le connecteur MongoDB 11.0.0.
+Python 3.12, pandas, Jupyter, MongoDB 7 dans Docker, Java 17, PySpark 4.0.1 avec le connecteur MongoDB 11.0.0, Matplotlib, Streamlit, Plotly et Parquet.
 
 ## Lancer le projet
 
 ```bash
 python3.12 -m venv .venv
 source .venv/bin/activate
-pip install pymongo pandas jupyter requests matplotlib pyspark==4.0.1
+pip install pymongo pandas jupyter requests matplotlib pyspark==4.0.1 streamlit plotly pyarrow
 docker run -d -p 27017:27017 --name mongo mongo:7
 python TP1/scripts/01_collecte_dummyjson.py
 jupyter notebook
 ```
 
 Ensuite on ouvre les notebooks dans l'ordre : TP1 puis TP2.
+
+Pour le TP3, la clé secrète se met dans le terminal avant de lancer Jupyter (elle n'est pas dans le dépôt) :
+
+```bash
+export PSEUDO_KEY="votre cle secrete"
+jupyter notebook
+cd TP3 && streamlit run app.py
+```
 
 ## Résultats principaux
 
@@ -57,3 +71,24 @@ Lazy evaluation : le nombre de jobs reste à 20 après les transformations et pa
 Après `repartition(4)`, Spark lance 4 tasks, une par partition.
 
 ![Jobs et tasks](captures/03_jobs_4_tasks_partitions.png)
+
+## TP3 : graphiques
+
+![Chiffre d'affaires par catégorie](TP3/graphiques/ca_par_categorie.png)
+
+![Top 10 clients pseudonymisés](TP3/graphiques/top10_clients.png)
+
+## TP3 : dashboard Streamlit
+
+Le dashboard a 5 vues. On le lance avec `cd TP3 && streamlit run app.py`.
+
+![Vue d'ensemble](captures/tp3_dashboard_1_vue_ensemble.png)
+
+| Vue | Capture |
+| --- | --- |
+| Catégories | [voir](captures/tp3_dashboard_2_categories.png) |
+| Encaissements | [voir](captures/tp3_dashboard_3_encaissements.png) |
+| Clients | [voir](captures/tp3_dashboard_4_clients.png) |
+| Paiements et données | [voir](captures/tp3_dashboard_5_paiements.png) |
+
+Le schéma complet est dans [TP3/architecture.md](TP3/architecture.md) et la note de sécurité dans [TP3/note_securite.md](TP3/note_securite.md).
